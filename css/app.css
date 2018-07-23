@@ -1,0 +1,50 @@
+:root {
+	--grid: 8;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+.container {
+	display: flex;
+	flex-direction: row;
+	padding: 2px;
+}
+
+.group {
+	-webkit-user-select: none;
+	user-select: none;
+	padding: calc(var(--grid) * 2px);
+	margin: 0 0 calc(var(--grid) * 1px) 0;
+	background: grey;
+}
+
+.group-dragging {
+	background: lightgreen;
+}
+
+.group-ghost {
+	background: white
+}
+
+.group-list {
+	margin: 2px;
+	min-height: 50px;
+	height: 100%;
+}
+
+.group-column {
+	padding: calc(var(--grid) * 1px);
+	width: 250px;
+	background: lightgrey;
+}
+
+.group-column-dragging {
+	background: lightgreen;
+}
+
+.group-column-dragging-over {
+	background: lightblue;
+}
