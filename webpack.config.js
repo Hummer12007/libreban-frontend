@@ -1,5 +1,9 @@
+const Autoprefixer = require('autoprefixer');
+const PostCssCssVariables = require('postcss-css-variables');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const path = require("path");
 
 module.exports = {
@@ -24,9 +28,40 @@ module.exports = {
         test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
-          "css-loader"
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              plugins: [Autoprefixer, PostCssCssVariables]
+            }
+          }
         ]
       }
+    ]
+  },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        test: /\.jsx?$/i,
+        parallel: true,
+        uglifyOptions: {
+          compress: {
+            ecma: 6,
+            passes: 2,
+            unsafe_Function: true,
+            unsafe_math: true,
+            unsafe_methods: true,
+            unsafe_proto: true,
+            unsafe_regexp: true
+          },
+          keep_fnames: false,
+          mangle: true,
+          output: {
+            beautify: false,
+          }
+        }
+      }),
+      new OptimizeCssAssetsPlugin({})
     ]
   },
   output: {
