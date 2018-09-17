@@ -10,6 +10,7 @@ module.exports = {
   entry: {
     client: 'index',
     prerender: 'prerender',
+    mary: 'mary',
   },
   module: {
     rules: [
@@ -77,6 +78,11 @@ module.exports = {
       chunks: ['client'],
       template: "./template/board.html",
       filename: "./templates/board.html"
+    }),
+    new HtmlWebPackPlugin({
+      chunks: ['mary'],
+      template: "./template/mary.html",
+      filename: "./mary.html"
     }),
     new MiniCssExtractPlugin()
   ],
