@@ -2,12 +2,15 @@
   <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta charset="utf-8"/>
-    <title>React Multi Drag and Drop Demo</title>
+    <title>Board: {{name}}</title>
   </head>
   <body>
     <body>
       <div id="root">{{markup|safe}}</div>
-      <script type="text/javascript">const initialState = JSON.parse('{{state|safe}}');</script>
+      <script type="text/javascript">
+        const initialState = JSON.parse('{{state|safe}}');
+        const boardId = '{{bid}}';
+      </script>
     </body>
   </body>
 </html>

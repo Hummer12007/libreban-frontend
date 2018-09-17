@@ -19,8 +19,13 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ['env', 'react', 'stage-2'],
-            plugins: [["transform-react-jsx", { "pragma": "h" }]]
+            presets: [
+              ['env', {targets: {safari:10}}],
+              'react', 'stage-2'],
+            plugins: [
+              ['transform-react-jsx', { pragma: 'h' }],
+              ['jsx-pragmatic', { module: 'preact', import: 'h', export: 'h' }]
+            ]
           }
         }
       },
