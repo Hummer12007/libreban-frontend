@@ -1,0 +1,31 @@
+@import "var.css";
+
+.sidebar-wrapper {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    border-right: 2px solid black;
+    width: 25%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: lightgray;
+}
+
+.sidebar-content {
+    margin: 0;
+    padding:20px;
+    font-size: 1rem;
+    height: 20px;
+}
+
+.sidebar-close {
+    background: none;
+    border:0;
+    position: absolute;
+    right: 10px;
+    top:15px;
+    font-size: 1rem;
+    color: black;
+}

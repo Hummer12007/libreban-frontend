@@ -1,17 +1,16 @@
-:root {
-	--grid: 8;
-}
+@import "var.css";
 
 html {
-	height: 100%;
+	margin: 0;
 }
 
 body {
-	min-height: 100%;
 	margin: 0;
 	padding: 5px;
 	font-family: sans-serif;
+	color: black;
 }
+
 .container {
 	border: 2px solid black;
 	background: lightgray;
@@ -33,6 +32,7 @@ body {
 	padding: calc(var(--grid) * 2px);
 	margin: 0 0 calc(var(--grid) * 1px) 0;
 	background: lightslategray;
+	opacity: 0.7;
 }
 
 .group-deleted {
@@ -44,7 +44,7 @@ body {
 }
 
 .group-ghost {
-	background: white
+	background: white;
 }
 
 .group-list {
@@ -65,4 +65,16 @@ body {
 
 .group-column-dragging-over {
 	background: lightblue;
+}
+.group-title {
+	position: relative;
+	color: black;
+}
+
+.group-title span {
+	display: inline-block;
+	cursor: pointer;
+	line-height: 1em;
+	position: absolute;
+	right: 0px;
 }

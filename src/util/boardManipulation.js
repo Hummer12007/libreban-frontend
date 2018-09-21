@@ -90,5 +90,7 @@ export const boardChanger = (event) => {
         };
     } else if (type === 'show-modal') {
         return { hasModal: true };
+    } else if (type === 'show-sidebar') {
+        return { hasSidebar: true };
     }
 }

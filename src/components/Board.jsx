@@ -5,17 +5,18 @@ import { dispatchApiUpdate } from 'util/api';
 
 import EventSink from 'components/EventSink'
 import Modal from 'components/Modal'
+import Sidebar from 'components/Sidebar'
 
-const Item = ({ id, name, description, status }) =>
-    <div className={status === 'pending' ? `${id}-pending` : id}>
-        {name}
+const Item = ({ id, name, description, status }, { dispatch }) =>
+    <div className={status === 'pending' ? `${id}-pending` : id} onClick={dispatch.bind(this, "show-sidebar")}>
+        <span>{name}</span>
     </div>
 
 const Column = (props, { dispatch }) => {
     const { id, cid, title, items } = props;
     return (
         <div className={`${id}-column`}>
-            <h2 className={`${id}-title`}>{title}   <span onClick={dispatch.bind(this, "show-modal")}>➕</span></h2>
+            <h2 className={`${id}-title`}>{title}<span onClick={dispatch.bind(this, "show-modal")}>➕</span></h2>
             <div className={`${id}-list`} data-sort-kind='column' data-column-id={cid}
                 ref={sortableRef(id, { group: `${id}-group`, onEnd: dispatch })} >
                 {items.map((item, idx) =>
@@ -39,6 +40,11 @@ class GridComponent extends Component {
     propagateChildEvent(dispatch, params) {
         if (params === "show-modal") {
             dispatch({ type: "show-modal", dispatch: false });
+            return;
+        }
+
+        if (params === "show-sidebar") {
+            dispatch({ type: "show-sidebar", dispatch: false });
             return;
         }
         const { to, oldIndex, newIndex, from } = params;
@@ -74,28 +80,37 @@ const dispatchAddCard = (dispatch, ev) => {
 
 const CardAdder = ({ columns }, { dispatch, closeModal }) =>
     <form action="javascript:void(0);" onSubmit={dispatchAddCard.bind(undefined, dispatch)}>
-        <p>Column:</p>
-        <p>
-            <select name="column">
-                {columns.map((col) =>
-                    <option value={col.id}>{col.name}</option>
-                )}
+        <div className="modal-inner">
+            <label> Column:  </label>
+            <select className="modal-input" name="column">
+                    {columns.map((col) =>
+                        <option value={col.id}>{col.name}</option>
+                    )}
             </select>
-        </p>
-        <p>Title:</p>
-        <p><input name="name" type="text" /></p>
-        <p>Description:</p>
-        <p><textarea name="description"></textarea></p>
-        <button type="submit" onClick={closeModal}>Submit</button>
-        <button type="reset" onClick={closeModal}>Close</button>
+            <label>Title: </label>
+            <input className="modal-input" name="name" type="text" />
+            <label>Description:</label>
+            <textarea  className="modal-input" name="description"></textarea>
+        </div>
+        <button className="btn" type="submit" onClick={closeModal}>Submit</button>
+        <button className="modal-close" type="reset" onClick={closeModal}>✖</button>
     </form>
+
+
+const CardDesc = ({ card }, { dispatch, closeSidebar}) =>
+        <div className="sidebar-inner">
+            <p>Status: </p>
+            <p>Title: </p>
+            <p>Description:</p>
+        </div>
 
 export default class Board extends Component {
     state = {
         columns: this.props.columns,
         tickets: this.props.tickets,
         order: this.props.order,
-        hasModal: false
+        hasModal: false,
+        hasSidebar: false
     };
 
     constructor(props) {
@@ -112,16 +127,23 @@ export default class Board extends Component {
     }
 
     showModal(value) {
-        this.setState({hasModal: value})
+        this.setState({hasModal: value});
+    }
+
+    showSidebar(value) {
+        this.setState({hasSidebar: value});
     }
 
     render({ }, { columns, tickets, order }) {
         return (
             <EventSink handler={[this.processEvent.bind(this), dispatchApiUpdate]}>
                 <GridComponent columns={columns} tickets={tickets} order={order} />
-                <Modal visible={this.state.hasModal} onClose={this.showModal.bind(this, false)}>
+                <Modal visible={this.state.hasModal} onClose={this.showModal.bind(this, false)} dismissable={true}>
                     <CardAdder columns={order.map((it) => ({ id: it, name: columns[it].name}))} />
                 </Modal>
+            <Sidebar visible={this.state.hasSidebar} onClose={this.showSidebar.bind(this, false)}>
+                <CardDesc columns={order.map((it) => ({ id: it, name: columns[it].name}))} />
+            </Sidebar>
             </EventSink>
         )
     }

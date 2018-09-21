@@ -1,5 +1,6 @@
 const Autoprefixer = require('autoprefixer');
 const PostCssCssVariables = require('postcss-css-variables');
+const PostCssImport = require('postcss-import')
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -38,7 +39,7 @@ module.exports = {
           {
             loader: "postcss-loader",
             options: {
-              plugins: [Autoprefixer, PostCssCssVariables]
+              plugins: [PostCssImport, Autoprefixer, PostCssCssVariables]
             }
           }
         ]

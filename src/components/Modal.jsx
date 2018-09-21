@@ -7,10 +7,15 @@ export default class Modal extends Component {
         return { closeModal: this.props.onClose };
     }
 
+    dismiss() {
+        if (this.props.dismissable)
+            this.props.onClose();
+    }
+
     render({visible, children}) {
         return visible ? (
             <Portal into="body">
-                <div className="modal-wrapper">
+                <div className="modal-wrapper" onClick={this.dismiss.bind(this)}>
                     <div className="modal-content">
                         {children}
                     </div>
