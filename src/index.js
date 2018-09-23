@@ -6,10 +6,6 @@ const root = document.getElementById('root');
 //const socket = undefined;
 const socket = new WebSocket(`${window.location.protocol == 'http:' ? 'ws' : 'wss'}://${window.location.host}${window.location.pathname}/updates`);
 
-socket.onmessage = (event) => {
-    console.log(event.data);
-}
-
 socket.onopen = (event) => {
     console.log("Connected");
 };

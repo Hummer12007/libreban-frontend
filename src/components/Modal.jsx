@@ -15,7 +15,8 @@ export default class Modal extends Component {
     render({visible, children}) {
         return visible ? (
             <Portal into="body">
-                <div className="modal-wrapper" onClick={this.dismiss.bind(this)}>
+                <div className="modal-wrapper">
+                    <div className="modal-outer" onClick={this.dismiss.bind(this)}></div>
                     <div className="modal-content">
                         {children}
                     </div>

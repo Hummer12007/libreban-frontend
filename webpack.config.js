@@ -78,6 +78,7 @@ module.exports = {
     new HtmlWebPackPlugin({
       chunks: ['client'],
       template: "./template/board.html",
+      favicon: "assets/kanban.png",
       filename: "./templates/board.html"
     }),
     new HtmlWebPackPlugin({

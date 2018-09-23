@@ -38,6 +38,12 @@ function uuidv4() {
     });
   }  
 
+export const findColumn = (state, tid) => {
+    var idx = -1;
+    const col = Object.keys(state.columns).find((col) => (idx = state.columns[col].tickets.indexOf(tid)) != -1);
+    return {column: col, index: idx};
+}
+
 export const boardChanger = (event) => {
     const {type, ...opts} = event;
     if (type === 'move-container') {
@@ -53,8 +59,7 @@ export const boardChanger = (event) => {
         return (prevState, props) => {
             if (!dest in prevState.columns)
                 return;
-            var srcIdx = -1;
-            const src = Object.keys(prevState.columns).find((col) => (srcIdx = prevState.columns[col].tickets.indexOf(ticket)) != -1);
+            const { column: src, index: srcIdx } = findColumn(prevState, ticket);
             if (srcIdx < 0 || destIdx < 0 || destIdx > prevState.columns[dest].tickets.length)
                 return;
             return { columns: move(prevState.columns,
@@ -88,9 +93,10 @@ export const boardChanger = (event) => {
                 tickets: tkts
             };
         };
-    } else if (type === 'show-modal') {
+    } else if (type === 'show-adder') {
         return { hasModal: true };
-    } else if (type === 'show-sidebar') {
-        return { hasSidebar: true };
+    } else if (type === 'show-ticket') {
+        const { tid } = opts;
+        return { hasSidebar: true, selectedTicket: tid };
     }
 }

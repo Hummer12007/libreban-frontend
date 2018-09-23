@@ -1,22 +1,24 @@
 import { Component } from 'preact';
 import sortableRef from 'util/sortableUtils';
-import { boardChanger } from 'util/boardManipulation';
+import { boardChanger, findColumn } from 'util/boardManipulation';
 import { dispatchApiUpdate } from 'util/api';
 
 import EventSink from 'components/EventSink'
 import Modal from 'components/Modal'
 import Sidebar from 'components/Sidebar'
 
-const Item = ({ id, name, description, status }, { dispatch }) =>
-    <div className={status === 'pending' ? `${id}-pending` : id} onClick={dispatch.bind(this, "show-sidebar")}>
+const Item = ({ tid, id, name, description, status }, { dispatch }) => {
+    return <div className={status === 'pending' ? `${id}-pending` : id}
+        onClick={dispatch.bind(this, {type:"show-ticket", tid: tid})}>
         <span>{name}</span>
     </div>
+}
 
 const Column = (props, { dispatch }) => {
     const { id, cid, title, items } = props;
     return (
         <div className={`${id}-column`}>
-            <h2 className={`${id}-title`}>{title}<span onClick={dispatch.bind(this, "show-modal")}>➕</span></h2>
+            <h2 className={`${id}-title`}>{title}<span onClick={dispatch.bind(this, "show-adder")}>➕</span></h2>
             <div className={`${id}-list`} data-sort-kind='column' data-column-id={cid}
                 ref={sortableRef(id, { group: `${id}-group`, onEnd: dispatch })} >
                 {items.map((item, idx) =>
@@ -32,20 +34,24 @@ const Grid = ({ columns, tickets, order }, { dispatch }) =>
         ref={sortableRef('group-column',
             { handle: '.group-title', onEnd: dispatch })}>
         {order.map((item, idx) =>
-            <Column id='group' cid={item} title={columns[item].name} items={columns[item].tickets.map((it, ii) => tickets[it])} />
+            <Column id='group' cid={item} title={columns[item].name}
+                items={columns[item].tickets.map((it, ii) => Object.assign({tid: it}, tickets[it]))} />
         )}
     </div>;
 
 class GridComponent extends Component {
     propagateChildEvent(dispatch, params) {
-        if (params === "show-modal") {
-            dispatch({ type: "show-modal", dispatch: false });
-            return;
-        }
-
-        if (params === "show-sidebar") {
-            dispatch({ type: "show-sidebar", dispatch: false });
-            return;
+        if ("type" in params) {
+            const { type } = params;
+            if (type === "show-adder") {
+                dispatch({ type: "show-adder", dispatch: false });
+                return;
+            }
+            if (type === "show-ticket") {
+                const { tid } = params;
+                dispatch({ type: "show-ticket", tid: tid, dispatch: false });
+                return;
+            }
         }
         const { to, oldIndex, newIndex, from } = params;
         const { columns, order } = this.props;
@@ -97,11 +103,12 @@ const CardAdder = ({ columns }, { dispatch, closeModal }) =>
     </form>
 
 
-const CardDesc = ({ card }, { dispatch, closeSidebar}) =>
-        <div className="sidebar-inner">
-            <p>Status: </p>
-            <p>Title: </p>
-            <p>Description:</p>
+const CardDesc = ({ card, column }, { dispatch, closeSidebar}) =>
+    <div className="sidebar-inner">
+            <p>Status: {column}</p>
+            <p>Title: {card.name}</p>
+            <p>Description</p>
+            <p>{card.description}</p>
         </div>
 
 export default class Board extends Component {
@@ -110,6 +117,7 @@ export default class Board extends Component {
         tickets: this.props.tickets,
         order: this.props.order,
         hasModal: false,
+        selectedTicket: undefined,
         hasSidebar: false
     };
 
@@ -132,6 +140,9 @@ export default class Board extends Component {
 
     showSidebar(value) {
         this.setState({hasSidebar: value});
+        if (value === false) {
+            this.setState({selectedTicket: undefined});
+        }
     }
 
     render({ }, { columns, tickets, order }) {
@@ -141,9 +152,12 @@ export default class Board extends Component {
                 <Modal visible={this.state.hasModal} onClose={this.showModal.bind(this, false)} dismissable={true}>
                     <CardAdder columns={order.map((it) => ({ id: it, name: columns[it].name}))} />
                 </Modal>
-            <Sidebar visible={this.state.hasSidebar} onClose={this.showSidebar.bind(this, false)}>
-                <CardDesc columns={order.map((it) => ({ id: it, name: columns[it].name}))} />
-            </Sidebar>
+                <Sidebar visible={this.state.hasSidebar} onClose={this.showSidebar.bind(this, false)}>
+                    {this.state.selectedTicket ?
+                    <CardDesc
+                        column={this.state.columns[findColumn(this.state, this.state.selectedTicket).column].name}
+                        card={{id: this.state.selectedTicket, ...this.state.tickets[this.state.selectedTicket]}} />: {} }
+                </Sidebar>
             </EventSink>
         )
     }
