@@ -85,7 +85,7 @@ export const boardChanger = (event) => {
                 col.tickets.splice(idx, 0, tid);
             } else {
                 tkt.status = 'pending';
-                prevState.tickets[_rid] = tkt;
+                tkts[_rid] = tkt;
                 col.tickets.push(_rid);
             }
             return {
@@ -93,6 +93,36 @@ export const boardChanger = (event) => {
                 tickets: tkts
             };
         };
+    } else if (type === 'remove-ticket') {
+        const { rid, tid } = opts;
+        var _rid;
+        if (rid == undefined)
+            event.rid = _rid = uuidv4();
+        return (prevState, props) => {
+            const {column: c1, index} = findColumn(prevState, tid);
+            const {column: c2, index: ridx} = findColumn(prevState, rid);
+            const column = c1 || c2;
+            const col = prevState.columns[c1 || c2];
+            const tkts = prevState.tickets;
+            if (rid != undefined) {
+                delete(tkts[rid]);
+                delete(tkts[tid])
+                if (index > 0)
+                    col.tickets.splice(index, 1);
+                if (ridx > 0)
+                    col.tickets.splice(col.tickets.indexOf(rid), 1);
+            } else {
+                const tkt = prevState.tickets[tid];
+                tkt.status = 'deleted';
+                tkts[_rid] = tkt;
+                col.tickets[index] = _rid;
+                delete(tkts[tid]);
+            }
+            return {
+                columns: {...prevState.columns, [`${column}`]: col},
+                tickets: tkts
+            };
+        }
     } else if (type === 'show-adder') {
         return { hasModal: true };
     } else if (type === 'show-ticket') {

@@ -8,7 +8,7 @@ import Modal from 'components/Modal'
 import Sidebar from 'components/Sidebar'
 
 const Item = ({ tid, id, name, description, status }, { dispatch }) => {
-    return <div className={status === 'pending' ? `${id}-pending` : id}
+    return <div className={status === 'pending' ? `${id}-pending` : (status === 'deleted' ? `${id}-deleted` : id)}
         onClick={dispatch.bind(this, {type:"show-ticket", tid: tid})}>
         <span>{name}</span>
     </div>
@@ -18,7 +18,7 @@ const Column = (props, { dispatch }) => {
     const { id, cid, title, items } = props;
     return (
         <div className={`${id}-column`}>
-            <h2 className={`${id}-title`}>{title}<span onClick={dispatch.bind(this, "show-adder")}>➕</span></h2>
+            <h2 className={`${id}-title`}>{title}<span onClick={dispatch.bind(this, {type: "show-adder"})}>➕</span></h2>
             <div className={`${id}-list`} data-sort-kind='column' data-column-id={cid}
                 ref={sortableRef(id, { group: `${id}-group`, onEnd: dispatch })} >
                 {items.map((item, idx) =>
@@ -104,12 +104,17 @@ const CardAdder = ({ columns }, { dispatch, closeModal }) =>
 
 
 const CardDesc = ({ card, column }, { dispatch, closeSidebar}) =>
-    <div className="sidebar-inner">
+    <div className="card-content">
+        <div style="display:block">
             <p>Status: {column}</p>
             <p>Title: {card.name}</p>
             <p>Description</p>
             <p>{card.description}</p>
         </div>
+        <button className="btn btn-bottom" onClick={() => {
+            closeSidebar();
+            dispatch({ type: "remove-ticket", tid: card.id });}}>Delete</button>
+    </div>
 
 export default class Board extends Component {
     state = {

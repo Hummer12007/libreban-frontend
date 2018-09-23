@@ -37,6 +37,10 @@ body {
 
 .group-deleted {
 	background: lightcoral;
+	user-select: none;
+	padding: calc(var(--grid) * 2px);
+	margin: 0 0 calc(var(--grid) * 1px) 0;
+	opacity: 0.7;
 }
 
 .group-dragging {
@@ -77,4 +81,28 @@ body {
 	line-height: 1em;
 	position: absolute;
 	right: 0px;
+}
+
+.btn {
+	border:0;
+	cursor: pointer;
+	width: 70%;
+	display: block;
+	margin: 10px auto;
+	font-size: 1rem;
+	padding:10px;
+	font-weight: bold;
+	background: gray;
+}
+
+.btn-bottom {
+	align-self: flex-end;
+	margin-bottom: 50px;
+}
+
+.card-content {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
