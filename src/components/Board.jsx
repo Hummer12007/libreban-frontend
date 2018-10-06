@@ -103,7 +103,14 @@ const CardAdder = ({ columns }, { dispatch, closeModal }) =>
     </form>
 
 
-const CardDesc = ({ card, column }, { dispatch, closeSidebar}) =>
+const TitleView = ({ title, onUpdate }) => {
+    <span>
+        <span className="details-title" for="details-title-editor">{title}</span>
+        <input value="" name="details-title" id="details-title-editor" type="text" hidden />
+    </span>
+}
+
+const CardDesc = ({ card, column }, { dispatch, closeSidebar }) =>
     <div className="card-content">
         <div style="display:block">
             <p>Status: {column}</p>
